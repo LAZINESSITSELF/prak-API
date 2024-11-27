@@ -27,6 +27,15 @@ router.get("/", async (req, res) => {
     }
 });
 
+router.get("/:id", async (req, res) => {
+    try {
+        const cars = await Car.findById(req.params.id);
+        res.status(200).json(cars);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 // POST untuk menambahkan mobil baru
 router.post("/", upload.single("image"), async (req, res) => {
     const car = new Car({
