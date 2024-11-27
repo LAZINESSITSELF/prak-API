@@ -1,24 +1,28 @@
-import dotenv from "dotenv";
-import express from "express";
-import mongoose from "mongoose";
-import path from "path";
-import carRoutes from "./api/cars.js";
+import express from 'express';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import userRoutes from './api/userRoutes.js';
+import carRoutes from './api/carRoutes.js';
+import paymentRoutes from './api/paymentRoutes.js';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Middleware
 app.use(express.json());
-app.use("/uploads", express.static(path.join(path.resolve(), "uploads")));
 
-// Koneksi ke MongoDB Atlas tanpa opsi deprecated
-mongoose.connect(process.env.MONGODB_URI)
-    .then(() => console.log("Connected to MongoDB Atlas"))
-    .catch((error) => console.error("Failed to connect to MongoDB Atlas", error));
+// Routes
+app.use('/api/users', userRoutes);
+app.use('/api/cars', carRoutes);
+app.use('/api/payments', paymentRoutes);
 
-app.use("/api/cars", carRoutes);
+// Database Connection
+mongoose
+    .connect(process.env.MONGO_URI)
+    .then(() => console.log('Connected to MongoDB'))
+    .catch((err) => console.error(`Database connection error: ${err}`));
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+// Start Server
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
